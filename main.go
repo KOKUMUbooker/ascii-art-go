@@ -18,12 +18,12 @@ func main() {
 		fmt.Println()
 		return
 	}
-	
+
 	if input == "" {
 		return
 	}
 
-	input = strings.ReplaceAll(os.Args[1],`\n`,"\n")
+	input = strings.ReplaceAll(os.Args[1], `\n`, "\n")
 
 	// 1. Open the file
 	file, err := os.Open("standard.txt")
@@ -38,7 +38,7 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	// 4. Create mapping for {[rune] : ascii_string_layers_slice } as map[rune][]string
-	bannerMap := getBannerMapping(scanner, file);
+	bannerMap := getBannerMapping(scanner)
 
 	// 5. Check for errors that occurred during scanning (EOF is not an error)
 	if err := scanner.Err(); err != nil {
@@ -50,14 +50,14 @@ func main() {
 		sR := []rune(s)
 		if len(sR) == 1 && sR[0] == '\n' {
 			fmt.Println()
-			continue;
+			continue
 		}
 		PrintAsciiLine(s, bannerMap)
 	}
 	fmt.Println()
 }
 
-func getBannerMapping(scanner *bufio.Scanner,file *os.File) map[rune][]string {
+func getBannerMapping(scanner *bufio.Scanner) map[rune][]string {
 	i := 0
 	curRune := ' '
 	bannerMap := map[rune][]string{
@@ -94,7 +94,7 @@ func PrintAsciiLine(s string, bannerMap map[rune][]string) {
 				fmt.Printf("%v", group[i])
 			}
 		}
-		if i!= 7 { // Only
+		if i != 7 { // Only
 			fmt.Println()
 		}
 	}
