@@ -39,7 +39,7 @@ func main() {
 
 	i := 0
 	curRune := ' '
-	res := map[rune][]string{
+	bannerMap := map[rune][]string{
 		' ': {},
 	}
 	// 4. Iterate over the scanner to read line by line
@@ -50,10 +50,10 @@ func main() {
 			continue
 		}
 
-		res[curRune] = append(res[curRune], line)
+		bannerMap[curRune] = append(bannerMap[curRune], line)
 		if i > 0 && (i+1)%8 == 0 {
 			curRune++
-			res[curRune] = []string{}
+			bannerMap[curRune] = []string{}
 		}
 		if len(line) > 0 {
 			i++
@@ -73,16 +73,16 @@ func main() {
 			fmt.Println()
 			continue;
 		}
-		PrintAsciiLine(s, res)
+		PrintAsciiLine(s, bannerMap)
 	}
 	fmt.Println()
 
 }
 
-func PrintAsciiLine(s string, res map[rune][]string) {
+func PrintAsciiLine(s string, bannerMap map[rune][]string) {
 	for i := 0; i < 8; i++ { // Loop 8 times
 		for _, r := range s {
-			group, exists := res[r]
+			group, exists := bannerMap[r]
 			if exists {
 				fmt.Printf("%v", group[i])
 			}
