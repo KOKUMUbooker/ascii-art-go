@@ -1,24 +1,117 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 )
 
-func getInput() string {
-	if len(os.Args) < 2 {
-		return ""
-	}
-	return os.Args[1]
-}
-
 func main() {
-	input := getInput()
+	if len(os.Args) != 2 {
+		return
+	}
 
+	input := os.Args[1]
+	if input == `\n` {
+		fmt.Println()
+		return
+	}
+	
 	if input == "" {
 		return
 	}
 
-	fmt.Println(input)
+	input = strings.ReplaceAll(os.Args[1],`\n`,"\n")
+
+	// 1. Open the file
+	file, err := os.Open("standard.txt")
+	if err != nil {
+		log.Fatalf("impossible to open file: %s", err)
+	}
+
+	// 2. Defer closing the file until the main function returns
+	defer file.Close()
+
+	// 3. Create a new scanner object for the file
+	scanner := bufio.NewScanner(file)
+
+	i := 0
+	curRune := ' '
+	res := map[rune][]string{
+		' ': {},
+	}
+	// 4. Iterate over the scanner to read line by line
+	for scanner.Scan() {
+		// Get the current line as a string (newline termination is stripped by default)
+		line := scanner.Text()
+		if len(line) == 0 { // If line is empty ignore it
+			continue
+		}
+
+		res[curRune] = append(res[curRune], line)
+		if i > 0 && (i+1)%8 == 0 {
+			curRune++
+			res[curRune] = []string{}
+		}
+		if len(line) > 0 {
+			i++
+		}
+
+	}
+
+	// 5. Check for errors that occurred during scanning (EOF is not an error)
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("scanner encountered an error : %s", err)
+	}
+
+	sSlice := splitStrByNewLines(input)
+	for _, s := range sSlice {
+		sR := []rune(s)
+		if len(sR) == 1 && sR[0] == '\n' {
+			fmt.Println()
+			continue;
+		}
+		PrintAsciiLine(s, res)
+	}
+	fmt.Println()
+
 }
 
+func PrintAsciiLine(s string, res map[rune][]string) {
+	for i := 0; i < 8; i++ { // Loop 8 times
+		for _, r := range s {
+			group, exists := res[r]
+			if exists {
+				fmt.Printf("%v", group[i])
+			}
+		}
+		if i!= 7 { // Only
+			fmt.Println()
+		}
+	}
+}
+
+func splitStrByNewLines(s string) []string {
+	var tokens []string
+	current := ""
+
+	for _, r := range s {
+		if r == '\n' {
+			if current != "" {
+				tokens = append(tokens, current)
+				current = ""
+			}
+			tokens = append(tokens, "\n")
+		} else {
+			current += string(r)
+		}
+	}
+
+	if current != "" {
+		tokens = append(tokens, current)
+	}
+
+	return tokens
+}
