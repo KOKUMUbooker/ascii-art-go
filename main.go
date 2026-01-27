@@ -1,81 +1,117 @@
 package main
 
-import ( 
-"os"
-"fmt"
-"strings"
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"strings"
 )
 
 func main() {
-	content, _:= os.ReadFile("standard.txt")
-	newcontent := string(content)
+	if len(os.Args) != 2 {
+		return
+	}
 
-	char := strings.Split(newcontent, "\n\n")
-	store := []string{}
-	for _, c := range char {
-		if c == "" {
+	input := os.Args[1]
+	if input == `\n` {
+		fmt.Println()
+		return
+	}
+	
+	if input == "" {
+		return
+	}
+
+	input = strings.ReplaceAll(os.Args[1],`\n`,"\n")
+
+	// 1. Open the file
+	file, err := os.Open("standard.txt")
+	if err != nil {
+		log.Fatalf("impossible to open file: %s", err)
+	}
+
+	// 2. Defer closing the file until the main function returns
+	defer file.Close()
+
+	// 3. Create a new scanner object for the file
+	scanner := bufio.NewScanner(file)
+
+	i := 0
+	curRune := ' '
+	res := map[rune][]string{
+		' ': {},
+	}
+	// 4. Iterate over the scanner to read line by line
+	for scanner.Scan() {
+		// Get the current line as a string (newline termination is stripped by default)
+		line := scanner.Text()
+		if len(line) == 0 { // If line is empty ignore it
 			continue
 		}
-		store = append(store, c)
+
+		res[curRune] = append(res[curRune], line)
+		if i > 0 && (i+1)%8 == 0 {
+			curRune++
+			res[curRune] = []string{}
+		}
+		if len(line) > 0 {
+			i++
+		}
+
 	}
-	str := os.Args[1]
-	fmt.Print(Display(str, store))		
+
+	// 5. Check for errors that occurred during scanning (EOF is not an error)
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("scanner encountered an error : %s", err)
+	}
+
+	sSlice := splitStrByNewLines(input)
+	for _, s := range sSlice {
+		sR := []rune(s)
+		if len(sR) == 1 && sR[0] == '\n' {
+			fmt.Println()
+			continue;
+		}
+		PrintAsciiLine(s, res)
+	}
+	fmt.Println()
+
 }
 
-// func Display(str string, arstr []string) string {
-// 	var result strings.Builder
-// 	charLines := make([][]string, len(str))
-// 	for i, c := range str {
-// 		index := int(c) - 32
-// 		if index >= 0 && index < len(arstr) {
-// 			charLines[i] = strings.Split(arstr[index], "\n")
-// 		}
-// 	}
-// 	if len(charLines) == 0 || len(charLines[0]) == 0 {
-// 		return ""
-// 	}
-// 	height := len(charLines[0])
+func PrintAsciiLine(s string, res map[rune][]string) {
+	for i := 0; i < 8; i++ { // Loop 8 times
+		for _, r := range s {
+			group, exists := res[r]
+			if exists {
+				fmt.Printf("%v", group[i])
+			}
+		}
+		if i!= 7 { // Only
+			fmt.Println()
+		}
+	}
+}
 
-// 	for row := 0; row < height; row++ {
-// 		for col := 0; col < len(charLines); col++ {
-// 			if row < len(charLines[col]) {
-// 				result.WriteString(charLines[col][row])
-// 			}
-// 		}
-// 		result.WriteString("\n")
-// 	}
+func splitStrByNewLines(s string) []string {
+	var tokens []string
+	current := ""
 
-// 	return result.String()
-// }
+	for _, r := range s {
+		if r == '\n' {
+			if current != "" {
+				tokens = append(tokens, current)
+				current = ""
+			}
+			tokens = append(tokens, "\n")
+		} else {
+			current += string(r)
+		}
+	}
 
-func Display(str string, arstr []string) string {
-    var result strings.Builder
+	if current != "" {
+		tokens = append(tokens, current)
+	}
 
-    runes := []rune(str)
-    charLines := make([][]string, len(runes))
-
-    const charHeight = 8 // standard ASCII-art height
-
-    for i, c := range runes {
-        index := int(c) - 32
-
-        if index >= 0 && index < len(arstr) {
-            charLines[i] = strings.Split(arstr[index], "\n")
-        } else {
-            // fill with empty space if invalid character
-            charLines[i] = make([]string, charHeight)
-            for j := 0; j < charHeight; j++ {
-                charLines[i][j] = "       "
-            }
-        }
-    }
-
-    for row := 0; row < charHeight; row++ {
-        for col := 0; col < len(charLines); col++ {
-            result.WriteString(charLines[col][row])
-        }
-        result.WriteString("\n")
-    }
-
-    return result.String()
+	return tokens
 }
