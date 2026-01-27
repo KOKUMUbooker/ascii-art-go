@@ -37,12 +37,34 @@ func main() {
 	// 3. Create a new scanner object for the file
 	scanner := bufio.NewScanner(file)
 
+	// 4. Create mapping for {[rune] : ascii_string_layers_slice } as map[rune][]string
+	bannerMap := getBannerMapping(scanner, file);
+
+	// 5. Check for errors that occurred during scanning (EOF is not an error)
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("scanner encountered an error : %s", err)
+	}
+
+	sSlice := splitStrByNewLines(input)
+	for _, s := range sSlice {
+		sR := []rune(s)
+		if len(sR) == 1 && sR[0] == '\n' {
+			fmt.Println()
+			continue;
+		}
+		PrintAsciiLine(s, bannerMap)
+	}
+	fmt.Println()
+}
+
+func getBannerMapping(scanner *bufio.Scanner,file *os.File) map[rune][]string {
 	i := 0
 	curRune := ' '
 	bannerMap := map[rune][]string{
 		' ': {},
 	}
-	// 4. Iterate over the scanner to read line by line
+
+	// Iterate over the scanner to read line by line
 	for scanner.Scan() {
 		// Get the current line as a string (newline termination is stripped by default)
 		line := scanner.Text()
@@ -61,22 +83,7 @@ func main() {
 
 	}
 
-	// 5. Check for errors that occurred during scanning (EOF is not an error)
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("scanner encountered an error : %s", err)
-	}
-
-	sSlice := splitStrByNewLines(input)
-	for _, s := range sSlice {
-		sR := []rune(s)
-		if len(sR) == 1 && sR[0] == '\n' {
-			fmt.Println()
-			continue;
-		}
-		PrintAsciiLine(s, bannerMap)
-	}
-	fmt.Println()
-
+	return bannerMap
 }
 
 func PrintAsciiLine(s string, bannerMap map[rune][]string) {
