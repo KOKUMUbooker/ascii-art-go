@@ -13,10 +13,17 @@ func main() {
 		return
 	}
 
-	input := strings.ReplaceAll(os.Args[1],`\n`,"\n")
-	if input == "" {
-		fmt.Println("")
+	input := os.Args[1]
+	if input == `\n` {
+		fmt.Println()
+		return
 	}
+	
+	if input == "" {
+		return
+	}
+
+	input = strings.ReplaceAll(os.Args[1],`\n`,"\n")
 
 	// 1. Open the file
 	file, err := os.Open("standard.txt")
