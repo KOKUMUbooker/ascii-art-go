@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -69,12 +70,23 @@ func main() {
 	// }
 
 	// 5. Check for errors that occurred during scanning (EOF is not an error)
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("scanner encountered an error: %s", err)
-	}
+	// if err := scanner.Err(); err != nil {
+	// 	log.Fatalf("scanner encountered an error : %s", err)
+	// }
 
+	sSlice := strings.Split(input, "\\n")
+	// fmt.Println("len of slice : ", len(sSlice))
+	for i, s := range sSlice {
+		if i != 0 && i != len(sSlice)-1 {
+			fmt.Println()
+		}
+		PrintAsciiLine(s, res)
+	}
+}
+
+func PrintAsciiLine(s string, res map[rune][]string) {
 	for i := 0; i < 8; i++ { // Loop 8 times
-		for _, r := range input {
+		for _, r := range s {
 			group, exists := res[r]
 			if exists {
 				fmt.Printf("%v", group[i])
