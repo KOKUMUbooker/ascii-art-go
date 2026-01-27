@@ -9,15 +9,11 @@ import (
 )
 
 func main() {
-	// for i := ' '; i <= 126; i++ {
-	// 	fmt.Printf("%v = %v \n", i, string(i))
-	// }
-
 	if len(os.Args) != 2 {
 		return
 	}
 
-	input := os.Args[1]
+	input := strings.ReplaceAll(os.Args[1],`\n`,"\n")
 	if input == "" {
 		fmt.Println("")
 	}
@@ -47,8 +43,6 @@ func main() {
 			continue
 		}
 
-		// fmt.Println(line, "len : ", len(line), " i : ", i, "is divisible by 8 : ", i%8 == 0)
-
 		res[curRune] = append(res[curRune], line)
 		if i > 0 && (i+1)%8 == 0 {
 			curRune++
@@ -59,29 +53,23 @@ func main() {
 		}
 
 	}
-	// fmt.Println("\nNumber of lines : ", i)
-	// fmt.Println("res items : ", len(res))
-	// for key, val := range res {
-	// 	fmt.Println("Key : ", string(key))
-	// 	for _, s := range val {
-	// 		fmt.Println(s)
-	// 	}
-	// 	fmt.Println()
-	// }
 
 	// 5. Check for errors that occurred during scanning (EOF is not an error)
-	// if err := scanner.Err(); err != nil {
-	// 	log.Fatalf("scanner encountered an error : %s", err)
-	// }
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("scanner encountered an error : %s", err)
+	}
 
-	sSlice := strings.Split(input, "\\n")
-	// fmt.Println("len of slice : ", len(sSlice))
-	for i, s := range sSlice {
-		if i != 0 && i != len(sSlice)-1 {
+	sSlice := splitStrByNewLines(input)
+	for _, s := range sSlice {
+		sR := []rune(s)
+		if len(sR) == 1 && sR[0] == '\n' {
 			fmt.Println()
+			continue;
 		}
 		PrintAsciiLine(s, res)
 	}
+	fmt.Println()
+
 }
 
 func PrintAsciiLine(s string, res map[rune][]string) {
@@ -92,6 +80,31 @@ func PrintAsciiLine(s string, res map[rune][]string) {
 				fmt.Printf("%v", group[i])
 			}
 		}
-		fmt.Println()
+		if i!= 7 { // Only
+			fmt.Println()
+		}
 	}
+}
+
+func splitStrByNewLines(s string) []string {
+	var tokens []string
+	current := ""
+
+	for _, r := range s {
+		if r == '\n' {
+			if current != "" {
+				tokens = append(tokens, current)
+				current = ""
+			}
+			tokens = append(tokens, "\n")
+		} else {
+			current += string(r)
+		}
+	}
+
+	if current != "" {
+		tokens = append(tokens, current)
+	}
+
+	return tokens
 }
