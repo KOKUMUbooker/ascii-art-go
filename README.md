@@ -16,26 +16,25 @@ splitStrByNewLines(s string): Splits the input string into separate lines based 
 
 ## Code explanation
 
-main():
+### main():
     This function checks if the correct number of command-line arguments is provided. If not, it exits early.
     It processes the input string, replacing any \n with actual newline characters.
     The function opens the standard.txt file and initializes a scanner to read its contents.
     It calls getBannerMapping to create a mapping of runes to their ASCII representations.
     Finally, it splits the input string into lines and prints each line in ASCII format using PrintAsciiLine.
 
-getBannerMapping(scanner *bufio.Scanner):
+### getBannerMapping(scanner *bufio.Scanner):
     This function reads lines from the scanner and populates a map where each rune is associated with a slice of strings representing its ASCII art.
     It skips empty lines and increments a counter to track the number of lines read. After every 8 lines, it moves to the next rune.
 
-PrintAsciiLine(s string, bannerMap map[rune][]string):
+### PrintAsciiLine(s string, bannerMap map[rune][]string):
     This function prints the ASCII representation of each character in the input string.
     It loops 8 times (as each character is represented in 8 lines) and prints the corresponding ASCII art for each rune found in the bannerMap.
 
-splitStrByNewLines(s string):
+### splitStrByNewLines(s string):
     This function takes a string and splits it into separate lines based on newline characters.
     It constructs a slice of strings, ensuring that each line is captured correctly, including standalone newline characters.
 
 
-Conclusion
-
-This Go program effectively converts a string input into ASCII art by reading character representations from a file. It demonstrates file handling, string manipulation, and the use of maps in Go. By understanding this code, you can modify or extend its functionality to suit your needs, such as changing the ASCII art style or adding more characters.
+## Conclusion
+This Go program effectively converts a string input into ASCII art by reading character representations from a file. It demonstrates file handling, string manipulation, and the use of maps in Go.
