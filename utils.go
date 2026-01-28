@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"strings"
 )
 
 func getBannerMapping(scanner *bufio.Scanner) map[rune][]string {
@@ -36,20 +36,41 @@ func getBannerMapping(scanner *bufio.Scanner) map[rune][]string {
 	return bannerMap
 }
 
-func PrintAsciiLine(s string, bannerMap map[rune][]string) {
+// Returns a string containing the 8 layers of a string that can then be printed to output
+func getAsciiLine(s string, bannerMap map[rune][]string) string {
+	var lineRes strings.Builder
 	for i := 0; i < 8; i++ { // Loop 8 times
 		for _, r := range s {
 			group, exists := bannerMap[r]
 			if exists {
-				fmt.Printf("%v", group[i])
+				lineRes.WriteString(group[i])
 			}
 		}
 		if i != 7 { // Only
-			fmt.Println()
+			lineRes.WriteString("\n")
 		}
 	}
+
+	return lineRes.String()
 }
 
+// For each string in sSlice, its expected representation in ascii is obtained & appended to a result string & then returned
+func getResultAscii(sSlice []string, bannerMap map[rune][]string) string {
+	var resStr strings.Builder
+	for _, s := range sSlice {
+		sR := []rune(s)
+		if len(sR) == 1 && sR[0] == '\n' {
+			resStr .WriteString("\n")
+			continue
+		}
+		resStr .WriteString(getAsciiLine(s, bannerMap))
+	}
+	resStr .WriteString("\n")
+
+	return resStr.String()
+}
+
+// Split input using \n but still retain the \n
 func splitStrByNewLines(s string) []string {
 	var tokens []string
 	current := ""

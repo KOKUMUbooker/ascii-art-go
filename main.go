@@ -45,15 +45,12 @@ func main() {
 		log.Fatalf("scanner encountered an error : %s", err)
 	}
 
+	// 6. Split input using \n but still retain the \n
 	sSlice := splitStrByNewLines(input)
-	for _, s := range sSlice {
-		sR := []rune(s)
-		if len(sR) == 1 && sR[0] == '\n' {
-			fmt.Println()
-			continue
-		}
-		PrintAsciiLine(s, bannerMap)
-	}
-	fmt.Println()
-}
 
+	// 7. Get result string from each of those split strings
+	resStr := getResultAscii(sSlice, bannerMap)
+
+	// 8. Print the result
+	fmt.Printf("%v", resStr)
+}

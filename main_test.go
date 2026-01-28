@@ -2,49 +2,102 @@ package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"os"
 	"testing"
 )
 
-func TestSplitStrByNewLines(t *testing.T) {
-	input := "Hello\nWorld"
-	expected := []string{"Hello", "\n", "World"}
+const helloNoNewline = ` _              _   _          
+| |            | | | |         
+| |__     ___  | | | |   ___   
+|  _ \   / _ \ | | | |  / _ \  
+| | | | |  __/ | | | | | (_) | 
+|_| |_|  \___| |_| |_|  \___/  
+                               
+                               `
 
-	result := splitStrByNewLines(input)
+const helloSingleNewline = ` _    _          _   _          
+| |  | |        | | | |         
+| |__| |   ___  | | | |   ___   
+|  __  |  / _ \ | | | |  / _ \  
+| |  | | |  __/ | | | | | (_) | 
+|_|  |_|  \___| |_| |_|  \___/  
+                                
+                                
 
-	if len(result) != len(expected) {
-		t.Fatalf("expected %d elements, got %d", len(expected), len(result))
+`
+
+const helloDoubleNewline = ` _    _          _   _          
+| |  | |        | | | |         
+| |__| |   ___  | | | |   ___   
+|  __  |  / _ \ | | | |  / _ \  
+| |  | | |  __/ | | | | | (_) | 
+|_|  |_|  \___| |_| |_|  \___/  
+                                
+                                
+
+ _______   _                           
+|__   __| | |                          
+   | |    | |__     ___   _ __    ___  
+   | |    |  _ \   / _ \ | '__|  / _ \ 
+   | |    | | | | |  __/ | |    |  __/ 
+   |_|    |_| |_|  \___| |_|     \___| 
+                                       
+                                       `
+
+type TestGroup struct {
+	name     string
+	input    string
+	expected string
+}
+
+func TestMain(t *testing.T) {
+	tests := []TestGroup{
+		{
+			name:     "String with no newline",
+			input:    "hello",
+			expected: helloNoNewline,
+		},
+		{
+			name:     "String with single newline",
+			input:    "Hello\n",
+			expected: helloSingleNewline,
+		},
+		{
+			name:     "String with double newline",
+			input:    "Hello\n\nThere",
+			expected: helloDoubleNewline,
+		},
 	}
 
-	for i := range expected {
-		if result[i] != expected[i] {
-			t.Errorf("at index %d: expected %q, got %q", i, expected[i], result[i])
-		}
+	bannerMap, err := prepareTestBannerMap()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i, tableTest := range tests {
+		tt := tableTest
+		t.Run(tt.name, func(t *testing.T) {
+			sSlice := splitStrByNewLines(tt.input)
+			res := getResultAscii(sSlice, bannerMap)
+			if res != tt.expected {
+				// t.Errorf("got %q, want %q", res, tt.expected)
+				t.Errorf("Test %v failed ", i+1)
+			}
+		})
 	}
 }
 
-func TestGetBannerMapping(t *testing.T) {
+func prepareTestBannerMap() (map[rune][]string, error) {
 	file, err := os.Open("standard.txt")
 	if err != nil {
-		t.Fatalf("failed to open standard.txt: %v", err)
+		err := fmt.Sprintf("failed to open file: %s", err)
+		return nil, errors.New(err)
 	}
 	defer file.Close()
-
 	scanner := bufio.NewScanner(file)
 	bannerMap := getBannerMapping(scanner)
 
-	if len(bannerMap['A']) != 8 {
-		t.Errorf("expected 8 lines for 'A', got %d", len(bannerMap['A']))
-	}
-
-	if _, exists := bannerMap[' ']; !exists {
-		t.Errorf("space character not found in banner map")
-	}
-
-	// Check that the slices tied to each rune is the map contains 8 items
-	for key, val := range bannerMap {
-		if len(val) != 8 {
-			t.Errorf("Found %v for %v rune, expected 8", len(val), string(key))
-		}
-	}
+	return bannerMap, nil
 }
