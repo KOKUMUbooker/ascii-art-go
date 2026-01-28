@@ -15,7 +15,8 @@ const helloNoNewline = ` _              _   _
 | | | | |  __/ | | | | | (_) | 
 |_| |_|  \___| |_| |_|  \___/  
                                
-                               `
+                               
+`
 
 const helloSingleNewline = ` _    _          _   _          
 | |  | |        | | | |         
@@ -44,7 +45,8 @@ const helloDoubleNewline = ` _    _          _   _
    | |    | | | | |  __/ | |    |  __/ 
    |_|    |_| |_|  \___| |_|     \___| 
                                        
-                                       `
+                                       
+`
 
 type TestGroup struct {
 	name     string
