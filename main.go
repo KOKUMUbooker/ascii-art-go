@@ -75,7 +75,9 @@ func getBannerMapping(scanner *bufio.Scanner) map[rune][]string {
 		bannerMap[curRune] = append(bannerMap[curRune], line)
 		if i > 0 && (i+1)%8 == 0 {
 			curRune++
-			bannerMap[curRune] = []string{}
+			if i <= 126 {
+				bannerMap[curRune] = []string{}
+			}
 		}
 		if len(line) > 0 {
 			i++

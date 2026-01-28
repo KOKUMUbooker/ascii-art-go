@@ -40,4 +40,11 @@ func TestGetBannerMapping(t *testing.T) {
 	if _, exists := bannerMap[' ']; !exists {
 		t.Errorf("space character not found in banner map")
 	}
+
+	// Check that the slices tied to each rune is the map contains 8 items
+	for key, val := range bannerMap {
+		if len(val) != 8 {
+			t.Errorf("Found %v for %v rune, expected 8", len(val), string(key))
+		}
+	}
 }
