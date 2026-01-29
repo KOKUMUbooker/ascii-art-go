@@ -23,14 +23,23 @@ splitStrByNewLines(s string): Splits the input string into separate lines based 
 
 ## Code explanation
 ### main():
-    This function checks if the correct number of command-line arguments is provided. If not, it exits early.
-    It processes the input string, replacing any \n with actual newline characters.
 
-    The function opens the standard.txt file and initializes a scanner to read its contents.
+    The program first checks if exactly one argument is provided. If not, it exits early.
+    
+    It then processeses the input to handle special cases like newline characters and empty strings.
 
-    It calls getBannerMapping to create a mapping of runes to their ASCII representations.
+    The program attempts to open standard.txt for reading. If it fails, it logs the error and terminates.
 
-    Finally, it splits the input string into lines and prints each line in ASCII format using PrintAsciiLine.
+    A scanner is created to read the contents of the file, which is expected to contain the ASCII art mappings.
+
+    The getBannerMapping function is called to create a mapping of characters to their ASCII art representations.
+
+    After scanning, it checks for any errors that may have occurred during the scanning process.
+
+    The input string is split into slices based on newline characters while retaining the newlines.
+    
+    The getResultAscii function is called to generate the final ASCII art string based on the input slices and the mapping.
+    Output: Finally, the resulting ASCII art is printed to the console.
 
 ### getBannerMapping(scanner *bufio.Scanner):
     The function initializes a counter i and a variable curRune to track the current character being processed.
