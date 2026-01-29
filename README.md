@@ -11,6 +11,21 @@ String Manipulation: The program processes the input string to handle new lines 
 
 Data Structures: A map is used to associate each character (rune) with its corresponding ASCII art lines.
 
+## How to run the program
+
+First of all, make sure the standard.txt file is in the same directory as the main.go file.
+Open the terminal and navigate to the project directory: 
+```
+cd ascii-art
+```
+Run the program and pass the text as the argument:
+```
+go run . "Hello"
+```
+The text must be written inside quotes, and you can replace it with any text you like.
+
+The program will read standard.txt and print the input text as ASCII art in the terminal.
+
 ## Code Structure
 **main()**: The entry point of the program that handles input and orchestrates the ASCII art generation.
 
