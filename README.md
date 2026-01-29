@@ -1,6 +1,5 @@
 # Ascii Art
 
-
 This Go program reads a string input from the command line and converts it into ASCII art using a predefined banner mapping stored in a file named standard.txt.
 The program processes the input string, handles new lines, and prints the corresponding ASCII representation line by line.
 ## Key Concepts
@@ -12,29 +11,34 @@ Data Structures: A map is used to associate each character (rune) with its corre
 main(): The entry point of the program that handles input and orchestrates the ASCII art generation.
 getBannerMapping(scanner *bufio.Scanner): Reads the ASCII art from the file and creates a mapping of characters to their ASCII art representations.
 PrintAsciiLine(s string, bannerMap map[rune][]string): Prints the ASCII art for each character in the input string.
+getResultAscii(sSlice []string, bannerMap map[rune][]string): Processes a slice of strings and returns their combined ASCII art representation.
 splitStrByNewLines(s string): Splits the input string into separate lines based on new line characters.
-
 ## Code explanation
-
 ### main():
     This function checks if the correct number of command-line arguments is provided. If not, it exits early.
     It processes the input string, replacing any \n with actual newline characters.
     The function opens the standard.txt file and initializes a scanner to read its contents.
     It calls getBannerMapping to create a mapping of runes to their ASCII representations.
     Finally, it splits the input string into lines and prints each line in ASCII format using PrintAsciiLine.
-
 ### getBannerMapping(scanner *bufio.Scanner):
-    This function reads lines from the scanner and populates a map where each rune is associated with a slice of strings representing its ASCII art.
-    It skips empty lines and increments a counter to track the number of lines read. After every 8 lines, it moves to the next rune.
-
+    The function initializes a counter i and a variable curRune to track the current character being processed.
+    It creates a bannerMap to store the ASCII representations.
+    The function reads lines from the scanner, ignoring empty lines, and appends each line to the corresponding character in the bannerMap.
+    It increments the curRune after every 8 lines, ensuring that the mapping is correctly aligned with the ASCII characters.
 ### PrintAsciiLine(s string, bannerMap map[rune][]string):
-    This function prints the ASCII representation of each character in the input string.
-    It loops 8 times (as each character is represented in 8 lines) and prints the corresponding ASCII art for each rune found in the bannerMap.
-
+    The function initializes a strings.Builder to efficiently build the resulting ASCII line.
+    It loops 8 times (as each character has 8 lines of representation) and checks if each rune in the input string exists in the bannerMap.
+    If it exists, the corresponding line is appended to lineRes.
+    A newline character is added after each line except the last one.
+### getResultAscii(sSlice []string, bannerMap map[rune][]string):
+    The function initializes a strings.Builder for the final result.
+    It iterates over each string in the provided slice, converting it to runes for processing.
+    If the string is a newline, it appends a newline to the result.
+    Otherwise, it calls getAsciiLine to convert the string to ASCII art and appends the result.
 ### splitStrByNewLines(s string):
-    This function takes a string and splits it into separate lines based on newline characters.
-    It constructs a slice of strings, ensuring that each line is captured correctly, including standalone newline characters.
-
-
+    The function initializes a slice to hold the resulting tokens and a string to accumulate characters.
+    It iterates over each rune in the input string, checking for new line characters.
+    When a new line is encountered, it appends the accumulated string to the tokens and resets the accumulator.
+    Finally, it appends any remaining characters to the tokens.
 ## Conclusion
 This Go program effectively converts a string input into ASCII art by reading character representations from a file. It demonstrates file handling, string manipulation, and the use of maps in Go.
